@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Impiccato</string>
+
+    <string name="score">Punti: %s</string>
+    <string name="wrong_guesses">Errori: %s</string>
+
+    <string name="wrong_letter">Errore\!</string>
+    <string name="insert_letter">Lettera</string>
+
+    <string name="next_word">NUOVA PAROLA</string>
+    <string name="show_hint">Suggerimento</string>
+
+    <string name="congratulations">Congratulazioni!</string>
+    <string name="dialog_text">Hai ottenuto %s punti. Vuoi uscire o giocare di nuovo?</string>
+    <string name="reset_game">RIGIOCA</string>
+    <string name="exit_game">ESCI</string>
+
+    <string name="game_over">GAME OVER!</string>
+    <string name="g_o_dialog">Purtroppo hai perso\! Vuoi uscire o giocare di nuovo?</string>
+
+    <string name="copyright_disclaimer">
+        Treccani.it - Vocabolario Treccani on line, Istituto dell\'Enciclopedia Italiana
+    </string>
+</resources>
