@@ -37,17 +37,24 @@ class GameViewModel : ViewModel() {
     }
 
     fun resetGame() {
+        guessedLetters.clear()
         usedWords.clear()
         wordInProgress = chooseWordAndDisplay()
         _uiState.value = GameUIState(
+            score = 100,
+            isGuessedLetterWrong = false,
+            isHintRequired = false,
+            isBulbButtonEnabled = true,
+            numWrongGuessesPerWord = 0,
             currentWordToGuess = wordInProgress,
-            wordDefinition = currentWord.wordDefinition
+            wordDefinition = currentWord.wordDefinition,
+            isGameOver = false,
+            isGameEnded = false
         )
     }
 
     fun updateUserGuess(letterGuess : String) {
         userGuess = letterGuess
-        guessedLetters.add(userGuess)
         Log.d(TAG, "userGuess = $userGuess")
     }
 
@@ -62,7 +69,8 @@ class GameViewModel : ViewModel() {
                 updatedScore = updatedScore.minus(INCREASE_DECREASE_SCORE)
                 wrongGuesses++
             }
-            updateGameState(updatedScore, wrongGuesses)
+            guessedLetters.add(userGuess)
+            updateGameUI(updatedScore, wrongGuesses)
         }
         userGuess = ""
     }
@@ -87,24 +95,11 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun updateGameState(updatedScore: Int, wrongGuesses : Int) {
-        if (_uiState.value.numWrongGuessesPerWord == MAX_NO_OF_WRONG_GUESSES) {
-            if (_uiState.value.score > 0) {
-                goToNextWord(updatedScore)
-            } else {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        isGameOver = true
-                    )
-                }
-                //endGame()
-            }
-        } else if (wordCount == MAX_NO_OF_WORDS) {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    isGameEnded = true
-                )
-            }
+    private fun updateGameUI(updatedScore: Int, wrongGuesses: Int) {
+        if (updatedScore <= 0) {
+            endGame(updatedScore, true)
+        } else if (!wordInProgress.contains("_") || wrongGuesses > MAX_NO_OF_WRONG_GUESSES) {
+            goToNextWord(updatedScore)
         } else {
             _uiState.update { currentState ->
                 currentState.copy(
@@ -119,19 +114,45 @@ class GameViewModel : ViewModel() {
 
     fun goToNextWord(updatedScore : Int) {
         guessedLetters.clear()
-        usedWords.add(currentWord)
         wordCount++
-        wordInProgress = chooseWordAndDisplay()
-        _uiState.update { currentState ->
-            currentState.copy(
-                score = updatedScore,
-                numWrongGuessesPerWord = 0,
-                isBulbButtonEnabled = true,
-                isHintRequired = false,
-                isGuessedLetterWrong = false,
-                currentWordToGuess = wordInProgress,
-                wordDefinition = currentWord.wordDefinition
-            )
+        if (wordCount > MAX_NO_OF_WORDS) {
+            endGame(updatedScore, false)
+        } else {
+            usedWords.add(currentWord)
+            wordInProgress = chooseWordAndDisplay()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    score = updatedScore,
+                    numWrongGuessesPerWord = 0,
+                    isBulbButtonEnabled = true,
+                    isHintRequired = false,
+                    isGuessedLetterWrong = false,
+                    currentWordToGuess = wordInProgress,
+                    wordDefinition = currentWord.wordDefinition
+                )
+            }
+        }
+    }
+
+    private fun endGame(finalScore: Int, isGameLost : Boolean) {
+        if (isGameLost) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    score = finalScore,
+                    currentWordToGuess = "",
+                    wordDefinition = "",
+                    isGameOver = true
+                )
+            }
+        } else {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    score = finalScore,
+                    currentWordToGuess = "",
+                    wordDefinition = "",
+                    isGameEnded = true
+                )
+            }
         }
     }
 

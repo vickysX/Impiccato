@@ -1,6 +1,7 @@
 package com.example.impiccato.ui
 
 import android.app.Activity
+import android.app.AlertDialog
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -49,8 +50,8 @@ fun GameScreen(
             isGuessedLetterWrong = gameUIState.isGuessedLetterWrong,
             currentWord = gameUIState.currentWordToGuess,
             letterGuessed = gameViewModel.userGuess,
-            onGuessChanged = {gameViewModel.updateUserGuess(it)},
-            onKeyboardDone = {gameViewModel.checkUserGuess()}
+            onGuessChanged = { gameViewModel.updateUserGuess(it) },
+            onKeyboardDone = { gameViewModel.checkUserGuess() }
         )
         // Buttons here
         Row(
@@ -61,7 +62,7 @@ fun GameScreen(
         ) {
             IconButton(
                 enabled = gameUIState.isBulbButtonEnabled,
-                onClick = {gameViewModel.requireHint()}
+                onClick = { gameViewModel.requireHint() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.TipsAndUpdates,
@@ -94,7 +95,8 @@ fun GameScreen(
             }
         }
         if (gameUIState.isGameEnded) {
-            FinalAlertDialog(isGameLost = false,
+            FinalAlertDialog(
+                isGameLost = false,
                 score = gameUIState.score
             ) {
                 gameViewModel.resetGame()
@@ -106,8 +108,8 @@ fun GameScreen(
 @Composable
 fun GameStatus(
     modifier: Modifier = Modifier,
-    score : Int,
-    wrongGuesses : Int
+    score: Int,
+    wrongGuesses: Int
 ) {
     Row(
         modifier = modifier
@@ -132,11 +134,11 @@ fun GameStatus(
 @Composable
 fun GameLayout(
     modifier: Modifier = Modifier,
-    isGuessedLetterWrong : Boolean,
-    currentWord : String,
-    letterGuessed : String,
-    onGuessChanged : (String) -> Unit,
-    onKeyboardDone : () -> Unit
+    isGuessedLetterWrong: Boolean,
+    currentWord: String,
+    letterGuessed: String,
+    onGuessChanged: (String) -> Unit,
+    onKeyboardDone: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -163,7 +165,7 @@ fun GameLayout(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = {onKeyboardDone()}
+                onDone = { onKeyboardDone() }
             )
         )
     }
@@ -172,7 +174,7 @@ fun GameLayout(
 @Composable
 fun WordDefinition(
     modifier: Modifier = Modifier,
-    wordDefinition : String
+    wordDefinition: String
 ) {
     Icon(
         imageVector = Icons.Filled.TipsAndUpdates,
@@ -192,76 +194,58 @@ fun WordDefinition(
 
 @Composable
 fun FinalAlertDialog(
-    modifier: Modifier = Modifier,
-    isGameLost : Boolean,
-    score : Int,
-    restartGame : () -> Unit
+    modifier: Modifier =
+        Modifier
+            .padding(24.dp)
+            .wrapContentWidth(Alignment.CenterHorizontally),
+    isGameLost: Boolean,
+    score: Int,
+    restartGame: () -> Unit
 ) {
     val activity = (LocalContext.current as Activity)
-    when {
-        isGameLost -> AlertDialog(
-            onDismissRequest = {},
-            title = {
+    val onDismissClick = { activity.finish() }
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = {},
+        dismissButton = {
+            TextButton(
+                onClick = onDismissClick
+            ) {
                 Text(
-                    text = stringResource(R.string.game_over)
+                    text = stringResource(R.string.exit_game)
                 )
-            },
-            text = {
-                Text(
-                    text = stringResource(R.string.g_o_dialog)
-                )
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {activity.finish()}
-                ) {
-                    Text(
-                        text = stringResource(R.string.exit_game)
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = restartGame
-                ) {
-                    Text(
-                        text = stringResource(R.string.reset_game)
-                    )
-                }
             }
-        )
-        else -> AlertDialog(
-            onDismissRequest = {},
-            title = {
+        },
+        confirmButton = {
+            TextButton(
+                onClick = restartGame
+            ) {
                 Text(
-                    text = stringResource(R.string.congratulations)
+                    text = stringResource(R.string.reset_game)
                 )
-            },
-            text = {
-                Text(
-                    text = stringResource(R.string.dialog_text)
-                )
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {activity.finish()}
-                ) {
-                    Text(
-                        text = stringResource(R.string.exit_game)
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = restartGame
-                ) {
-                    Text(
-                        text = stringResource(R.string.reset_game)
-                    )
-                }
             }
-        )
-    }
+        },
+        title = {
+            when {
+                isGameLost -> Text(
+                    stringResource(id = R.string.game_over)
+                )
+                else -> Text(
+                    stringResource(id = R.string.congratulations)
+                )
+            }
+        },
+        text = {
+            when {
+                isGameLost -> Text(
+                    stringResource(id = R.string.g_o_dialog)
+                )
+                else -> Text(
+                    stringResource(id = R.string.dialog_text, score)
+                )
+            }
+        }
+    )
 }
 
 @Composable
@@ -271,5 +255,18 @@ fun FinalAlertDialog(
 fun LightThemePreview() {
     ImpiccatoTheme(darkTheme = false) {
         GameScreen()
+    }
+}
+
+@Composable
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+fun GameOverDialogPreview() {
+    ImpiccatoTheme() {
+        FinalAlertDialog(isGameLost = true, score = 0) {
+
+        }
     }
 }
