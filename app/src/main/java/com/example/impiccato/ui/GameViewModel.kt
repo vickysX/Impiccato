@@ -176,10 +176,11 @@ class GameViewModel : ViewModel() {
     }
 
     private fun displayChosenWord(word : String) : String {
-        val sb = StringBuilder()
-        for (letter in word) {
+        val sb = StringBuilder("_ ".repeat(word.length))
+        //sb.append("_ ".repeat(word.length))
+        /*for (letter in word) {
             sb.append("_ ")
-        }
+        }*/
         sb.trim()
         return sb.toString()
     }
