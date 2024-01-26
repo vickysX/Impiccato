@@ -47,7 +47,7 @@ class GameViewModel : ViewModel() {
             isBulbButtonEnabled = true,
             numWrongGuessesPerWord = 0,
             currentWordToGuess = wordInProgress,
-            wordDefinition = currentWord.wordDefinition,
+            wordDefinition = currentWord.definition,
             isGameOver = false,
             isGameEnded = false
         )
@@ -62,7 +62,7 @@ class GameViewModel : ViewModel() {
         var updatedScore = _uiState.value.score
         var wrongGuesses = _uiState.value.numWrongGuessesPerWord
         if (!guessedLetters.contains(userGuess)) {
-            if (currentWord.word.contains(userGuess)) {
+            if (currentWord.entry.contains(userGuess)) {
                 updatedScore = updatedScore.plus(INCREASE_DECREASE_SCORE)
                 updateWordDisplayed()
             } else {
@@ -80,8 +80,8 @@ class GameViewModel : ViewModel() {
             wordInProgress.split(" ") as MutableList<String>
         Log.d(TAG, "wordArr = $wordArr")
         var index = 0
-        while (index <= currentWord.word.lastIndexOf(userGuess)) {
-            index = currentWord.word.indexOf(userGuess, index)
+        while (index <= currentWord.entry.lastIndexOf(userGuess)) {
+            index = currentWord.entry.indexOf(userGuess, index)
             wordArr[index] = userGuess
             index++
         }
@@ -128,7 +128,7 @@ class GameViewModel : ViewModel() {
                     isHintRequired = false,
                     isGuessedLetterWrong = false,
                     currentWordToGuess = wordInProgress,
-                    wordDefinition = currentWord.wordDefinition
+                    wordDefinition = currentWord.definition
                 )
             }
         }
@@ -171,7 +171,7 @@ class GameViewModel : ViewModel() {
             return chooseWordAndDisplay()
         } else {
             usedWords.add(currentWord)
-            return displayChosenWord(currentWord.word)
+            return displayChosenWord(currentWord.entry)
         }
     }
 
