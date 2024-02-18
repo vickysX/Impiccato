@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">Impiccato</string>
+    <string name="app_name">Hangman</string>
+
+    <string name="first_time_message">
+        It seems you have never played before, what are you waiting for?
+    </string>
 
     <string name="score">Punti: %s</string>
     <string name="wrong_guesses">Errori: %s</string>

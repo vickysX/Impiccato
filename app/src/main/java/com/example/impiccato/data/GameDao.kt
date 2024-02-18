@@ -13,7 +13,7 @@ interface GameDao {
     @Insert
     suspend fun saveGame(game: Game)
 
-    @Query("SELECT score, date FROM game ORDER BY score DESC LIMIT 5")
+    @Query("SELECT * FROM game ORDER BY score DESC LIMIT 5")
     fun getBestGames(): Flow<List<Game>>
 
     @Update

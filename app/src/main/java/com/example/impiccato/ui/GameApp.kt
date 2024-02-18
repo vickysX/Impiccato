@@ -23,13 +23,20 @@ fun GameApp(
         val navController = rememberNavController()
         NavHost(
             navController = navController, 
-            startDestination = "",
+            startDestination = HomeScreenDestination.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(route = "") {
-                HomeScreen(pastGames = emptyList()) {
-                    
-                }
+            composable(route = HomeScreenDestination.route) {
+                HomeScreen(
+                    pastGames = emptyList(),
+                    onStartPlaying = {
+                        // TODO: Maybe Game init
+                        navController.navigate("${GuessingScreenDestination.route}/")
+                    }
+                )
+            }
+            composable(route = GuessingScreenDestination.routeWithArgs) {
+                GuessingScreen()
             }
         }
     }
