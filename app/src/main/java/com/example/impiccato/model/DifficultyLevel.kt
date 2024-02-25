@@ -1,7 +1,11 @@
 package com.example.impiccato.model
 
-enum class DifficultyLevel(level: String) {
-    Easy("easy"),
-    Medium("medium"),
-    Difficult("difficult")
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class DifficultyLevel {
+    @SerialName("easy") Easy,
+    @SerialName("medium") Medium,
+    @SerialName("difficult") Difficult
 }
